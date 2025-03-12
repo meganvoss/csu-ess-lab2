@@ -1,0 +1,2094 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.5.57">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>lab3</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="lab3_files/libs/clipboard/clipboard.min.js"></script>
+<script src="lab3_files/libs/quarto-html/quarto.js"></script>
+<script src="lab3_files/libs/quarto-html/popper.min.js"></script>
+<script src="lab3_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="lab3_files/libs/quarto-html/anchor.min.js"></script>
+<link href="lab3_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="lab3_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="lab3_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="lab3_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="lab3_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<link href="lab3_files/libs/tabwid-1.1.3/tabwid.css" rel="stylesheet">
+<script src="lab3_files/libs/tabwid-1.1.3/tabwid.js"></script>
+
+
+</head>
+
+<body class="fullcontent">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+
+
+
+<pre><code>---
+title: "Lab 3: COVID-19"
+subtitle: 'Ecosystem Science and Sustainability 330'
+author: 
+  - name: Megan Voss
+    email: megan.voss@colostate.edu
+format: html
+---</code></pre>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
+✔ dplyr     1.1.4     ✔ readr     2.1.5
+✔ forcats   1.0.0     ✔ stringr   1.5.1
+✔ ggplot2   3.5.1     ✔ tibble    3.2.1
+✔ lubridate 1.9.4     ✔ tidyr     1.3.1
+✔ purrr     1.0.2     
+── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+✖ dplyr::filter() masks stats::filter()
+✖ dplyr::lag()    masks stats::lag()
+ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(flextable)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attaching package: 'flextable'
+
+The following object is masked from 'package:purrr':
+
+    compose</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(zoo)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attaching package: 'zoo'
+
+The following objects are masked from 'package:base':
+
+    as.Date, as.Date.numeric</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="question-1" class="level1">
+<h1>Question 1</h1>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>url <span class="ot">=</span> <span class="st">'https://raw.githubusercontent.com/nytimes/covid-19-data/master/us-counties.csv'</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>covid_data <span class="ot">=</span> <span class="fu">read_csv</span>(url)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Rows: 2502832 Columns: 6
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: ","
+chr  (3): county, state, fips
+dbl  (2): cases, deaths
+date (1): date
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+</div>
+</div>
+</section>
+<section id="question-2" class="level1">
+<h1>Question 2</h1>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>txt <span class="ot">&lt;-</span> <span class="st">"2022-02-01"</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="fu">class</span>(txt)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "character"</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>date_example <span class="ot">&lt;-</span> <span class="fu">as.Date</span>(txt)</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="fu">class</span>(date_example)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "Date"</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>my.date <span class="ot">&lt;-</span> <span class="fu">as.Date</span>(<span class="st">"2022-02-01"</span>)</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>my.state <span class="ot">&lt;-</span> <span class="st">"Colorado"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>colorado <span class="ot">&lt;-</span> covid_data <span class="sc">|&gt;</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(state <span class="sc">==</span> my.state) <span class="sc">|&gt;</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(county) <span class="sc">|&gt;</span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(date) <span class="sc">|&gt;</span></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">new_cases =</span> cases <span class="sc">-</span> <span class="fu">lag</span>(cases),</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>         <span class="at">new_deaths =</span> deaths <span class="sc">-</span> <span class="fu">lag</span>(deaths)) <span class="sc">|&gt;</span></span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">filter</span>(colorado, date <span class="sc">==</span> my.date) <span class="sc">|&gt;</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_max</span>(cases, <span class="at">n=</span><span class="dv">5</span>) <span class="sc">|&gt;</span></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="at">Date =</span> date, <span class="at">County =</span> county, <span class="at">cases =</span> cases) <span class="sc">|&gt;</span></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">flextable</span>() <span class="sc">|&gt;</span></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_caption</span>(<span class="st">"Most Total Cases"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="tabwid"><style>.cl-05d61c16{}.cl-05d29ad2{font-family:'Helvetica';font-size:11pt;font-weight:normal;font-style:normal;text-decoration:none;color:rgba(0, 0, 0, 1.00);background-color:transparent;}.cl-05d3d294{margin:0;text-align:right;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:5pt;padding-top:5pt;padding-left:5pt;padding-right:5pt;line-height: 1;background-color:transparent;}.cl-05d3d295{margin:0;text-align:left;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:5pt;padding-top:5pt;padding-left:5pt;padding-right:5pt;line-height: 1;background-color:transparent;}.cl-05d3df46{width:0.75in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 1.5pt solid rgba(102, 102, 102, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-05d3df47{width:0.75in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 1.5pt solid rgba(102, 102, 102, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-05d3df50{width:0.75in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-05d3df51{width:0.75in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-05d3df52{width:0.75in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-05d3df5a{width:0.75in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}</style><table data-quarto-disable-processing="true" class="cl-05d61c16"><thead><tr style="overflow-wrap:break-word;"><th class="cl-05d3df46"><p class="cl-05d3d294"><span class="cl-05d29ad2">Date</span></p></th><th class="cl-05d3df47"><p class="cl-05d3d295"><span class="cl-05d29ad2">County</span></p></th><th class="cl-05d3df46"><p class="cl-05d3d294"><span class="cl-05d29ad2">cases</span></p></th></tr></thead><tbody><tr style="overflow-wrap:break-word;"><td class="cl-05d3df50"><p class="cl-05d3d294"><span class="cl-05d29ad2">2022-02-01</span></p></td><td class="cl-05d3df51"><p class="cl-05d3d295"><span class="cl-05d29ad2">El Paso</span></p></td><td class="cl-05d3df50"><p class="cl-05d3d294"><span class="cl-05d29ad2">170,673</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-05d3df50"><p class="cl-05d3d294"><span class="cl-05d29ad2">2022-02-01</span></p></td><td class="cl-05d3df51"><p class="cl-05d3d295"><span class="cl-05d29ad2">Denver</span></p></td><td class="cl-05d3df50"><p class="cl-05d3d294"><span class="cl-05d29ad2">159,022</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-05d3df50"><p class="cl-05d3d294"><span class="cl-05d29ad2">2022-02-01</span></p></td><td class="cl-05d3df51"><p class="cl-05d3d295"><span class="cl-05d29ad2">Arapahoe</span></p></td><td class="cl-05d3df50"><p class="cl-05d3d294"><span class="cl-05d29ad2">144,255</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-05d3df50"><p class="cl-05d3d294"><span class="cl-05d29ad2">2022-02-01</span></p></td><td class="cl-05d3df51"><p class="cl-05d3d295"><span class="cl-05d29ad2">Adams</span></p></td><td class="cl-05d3df50"><p class="cl-05d3d294"><span class="cl-05d29ad2">126,768</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-05d3df52"><p class="cl-05d3d294"><span class="cl-05d29ad2">2022-02-01</span></p></td><td class="cl-05d3df5a"><p class="cl-05d3d295"><span class="cl-05d29ad2">Jefferson</span></p></td><td class="cl-05d3df52"><p class="cl-05d3d294"><span class="cl-05d29ad2">113,240</span></p></td></tr></tbody></table></div>
+</div>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">filter</span>(colorado, date <span class="sc">==</span> my.date) <span class="sc">|&gt;</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_max</span>(cases, <span class="at">n =</span> <span class="dv">5</span>) <span class="sc">|&gt;</span></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="at">Date =</span> date, <span class="at">County =</span> county, <span class="at">Cases =</span> new_cases) <span class="sc">|&gt;</span></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">flextable</span>() <span class="sc">|&gt;</span></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_caption</span>(<span class="at">caption =</span> <span class="st">"Most New Cases"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="tabwid"><style>.cl-05dbdafc{}.cl-05d985ea{font-family:'Helvetica';font-size:11pt;font-weight:normal;font-style:normal;text-decoration:none;color:rgba(0, 0, 0, 1.00);background-color:transparent;}.cl-05da7810{margin:0;text-align:right;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:5pt;padding-top:5pt;padding-left:5pt;padding-right:5pt;line-height: 1;background-color:transparent;}.cl-05da7811{margin:0;text-align:left;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:5pt;padding-top:5pt;padding-left:5pt;padding-right:5pt;line-height: 1;background-color:transparent;}.cl-05da8242{width:0.75in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 1.5pt solid rgba(102, 102, 102, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-05da8243{width:0.75in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 1.5pt solid rgba(102, 102, 102, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-05da824c{width:0.75in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-05da824d{width:0.75in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-05da824e{width:0.75in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-05da824f{width:0.75in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}</style><table data-quarto-disable-processing="true" class="cl-05dbdafc"><thead><tr style="overflow-wrap:break-word;"><th class="cl-05da8242"><p class="cl-05da7810"><span class="cl-05d985ea">Date</span></p></th><th class="cl-05da8243"><p class="cl-05da7811"><span class="cl-05d985ea">County</span></p></th><th class="cl-05da8242"><p class="cl-05da7810"><span class="cl-05d985ea">Cases</span></p></th></tr></thead><tbody><tr style="overflow-wrap:break-word;"><td class="cl-05da824c"><p class="cl-05da7810"><span class="cl-05d985ea">2022-02-01</span></p></td><td class="cl-05da824d"><p class="cl-05da7811"><span class="cl-05d985ea">El Paso</span></p></td><td class="cl-05da824c"><p class="cl-05da7810"><span class="cl-05d985ea">630</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-05da824c"><p class="cl-05da7810"><span class="cl-05d985ea">2022-02-01</span></p></td><td class="cl-05da824d"><p class="cl-05da7811"><span class="cl-05d985ea">Denver</span></p></td><td class="cl-05da824c"><p class="cl-05da7810"><span class="cl-05d985ea">389</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-05da824c"><p class="cl-05da7810"><span class="cl-05d985ea">2022-02-01</span></p></td><td class="cl-05da824d"><p class="cl-05da7811"><span class="cl-05d985ea">Arapahoe</span></p></td><td class="cl-05da824c"><p class="cl-05da7810"><span class="cl-05d985ea">401</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-05da824c"><p class="cl-05da7810"><span class="cl-05d985ea">2022-02-01</span></p></td><td class="cl-05da824d"><p class="cl-05da7811"><span class="cl-05d985ea">Adams</span></p></td><td class="cl-05da824c"><p class="cl-05da7810"><span class="cl-05d985ea">326</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-05da824e"><p class="cl-05da7810"><span class="cl-05d985ea">2022-02-01</span></p></td><td class="cl-05da824f"><p class="cl-05da7811"><span class="cl-05d985ea">Jefferson</span></p></td><td class="cl-05da824e"><p class="cl-05da7810"><span class="cl-05d985ea">291</span></p></td></tr></tbody></table></div>
+</div>
+</div>
+</section>
+<section id="question-3" class="level1">
+<h1>Question 3</h1>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>pop_url <span class="ot">&lt;-</span> <span class="st">'https://www2.census.gov/programs-surveys/popest/datasets/2020-2023/counties/totals/co-est2023-alldata.csv'</span></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>population <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(pop_url)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Rows: 3195 Columns: 67
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: ","
+chr  (5): SUMLEV, STATE, COUNTY, STNAME, CTYNAME
+dbl (62): REGION, DIVISION, ESTIMATESBASE2020, POPESTIMATE2020, POPESTIMATE2...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>pop <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(pop_url) <span class="sc">%&gt;%</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(COUNTY <span class="sc">!=</span> <span class="dv">0</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">fips =</span> <span class="fu">paste0</span>(<span class="fu">sprintf</span>(<span class="st">"%02d"</span>, STATE), <span class="fu">sprintf</span>(<span class="st">"%03d"</span>, COUNTY))) <span class="sc">%&gt;%</span></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(fips, <span class="fu">contains</span>(<span class="st">'NAME'</span>), <span class="fu">contains</span>(<span class="st">'2021'</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co">#mutate(</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>   <span class="co"># STATE = as.character(sprintf("%02d", as.numeric(STATE))),  </span></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a> <span class="co">#   COUNTY = as.character(sprintf("%03d", as.numeric(COUNTY))), </span></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>   <span class="co"># FIPS = paste0(STATE, COUNTY)  </span></span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a><span class="co">#  ) %&gt;%</span></span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a> <span class="co"># filter(COUNTY != "000") %&gt;%  </span></span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a><span class="co">#  select(FIPS, contains("NAME"), contains("2021"))  </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(population)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1] "SUMLEV"                "REGION"                "DIVISION"             
+ [4] "STATE"                 "COUNTY"                "STNAME"               
+ [7] "CTYNAME"               "ESTIMATESBASE2020"     "POPESTIMATE2020"      
+[10] "POPESTIMATE2021"       "POPESTIMATE2022"       "POPESTIMATE2023"      
+[13] "NPOPCHG2020"           "NPOPCHG2021"           "NPOPCHG2022"          
+[16] "NPOPCHG2023"           "BIRTHS2020"            "BIRTHS2021"           
+[19] "BIRTHS2022"            "BIRTHS2023"            "DEATHS2020"           
+[22] "DEATHS2021"            "DEATHS2022"            "DEATHS2023"           
+[25] "NATURALCHG2020"        "NATURALCHG2021"        "NATURALCHG2022"       
+[28] "NATURALCHG2023"        "INTERNATIONALMIG2020"  "INTERNATIONALMIG2021" 
+[31] "INTERNATIONALMIG2022"  "INTERNATIONALMIG2023"  "DOMESTICMIG2020"      
+[34] "DOMESTICMIG2021"       "DOMESTICMIG2022"       "DOMESTICMIG2023"      
+[37] "NETMIG2020"            "NETMIG2021"            "NETMIG2022"           
+[40] "NETMIG2023"            "RESIDUAL2020"          "RESIDUAL2021"         
+[43] "RESIDUAL2022"          "RESIDUAL2023"          "GQESTIMATESBASE2020"  
+[46] "GQESTIMATES2020"       "GQESTIMATES2021"       "GQESTIMATES2022"      
+[49] "GQESTIMATES2023"       "RBIRTH2021"            "RBIRTH2022"           
+[52] "RBIRTH2023"            "RDEATH2021"            "RDEATH2022"           
+[55] "RDEATH2023"            "RNATURALCHG2021"       "RNATURALCHG2022"      
+[58] "RNATURALCHG2023"       "RINTERNATIONALMIG2021" "RINTERNATIONALMIG2022"
+[61] "RINTERNATIONALMIG2023" "RDOMESTICMIG2021"      "RDOMESTICMIG2022"     
+[64] "RDOMESTICMIG2023"      "RNETMIG2021"           "RNETMIG2022"          
+[67] "RNETMIG2023"          </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(population)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 3195   67</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">nrow</span>(population)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 3195</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(population)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>spc_tbl_ [3,195 × 67] (S3: spec_tbl_df/tbl_df/tbl/data.frame)
+ $ SUMLEV               : chr [1:3195] "040" "050" "050" "050" ...
+ $ REGION               : num [1:3195] 3 3 3 3 3 3 3 3 3 3 ...
+ $ DIVISION             : num [1:3195] 6 6 6 6 6 6 6 6 6 6 ...
+ $ STATE                : chr [1:3195] "01" "01" "01" "01" ...
+ $ COUNTY               : chr [1:3195] "000" "001" "003" "005" ...
+ $ STNAME               : chr [1:3195] "Alabama" "Alabama" "Alabama" "Alabama" ...
+ $ CTYNAME              : chr [1:3195] "Alabama" "Autauga County" "Baldwin County" "Barbour County" ...
+ $ ESTIMATESBASE2020    : num [1:3195] 5024294 58809 231768 25229 22301 ...
+ $ POPESTIMATE2020      : num [1:3195] 5031864 58915 233227 24969 22188 ...
+ $ POPESTIMATE2021      : num [1:3195] 5050380 59203 239439 24533 22359 ...
+ $ POPESTIMATE2022      : num [1:3195] 5073903 59726 246531 24700 21986 ...
+ $ POPESTIMATE2023      : num [1:3195] 5108468 60342 253507 24585 21868 ...
+ $ NPOPCHG2020          : num [1:3195] 7570 106 1459 -260 -113 ...
+ $ NPOPCHG2021          : num [1:3195] 18516 288 6212 -436 171 ...
+ $ NPOPCHG2022          : num [1:3195] 23523 523 7092 167 -373 ...
+ $ NPOPCHG2023          : num [1:3195] 34565 616 6976 -115 -118 ...
+ $ BIRTHS2020           : num [1:3195] 13867 162 560 60 56 ...
+ $ BIRTHS2021           : num [1:3195] 57184 686 2337 270 240 ...
+ $ BIRTHS2022           : num [1:3195] 58106 706 2511 278 236 ...
+ $ BIRTHS2023           : num [1:3195] 58251 714 2531 267 240 ...
+ $ DEATHS2020           : num [1:3195] 15165 176 602 92 55 ...
+ $ DEATHS2021           : num [1:3195] 69135 696 2948 390 325 ...
+ $ DEATHS2022           : num [1:3195] 67208 687 3022 363 314 ...
+ $ DEATHS2023           : num [1:3195] 59813 621 2640 350 290 ...
+ $ NATURALCHG2020       : num [1:3195] -1298 -14 -42 -32 1 ...
+ $ NATURALCHG2021       : num [1:3195] -11951 -10 -611 -120 -85 ...
+ $ NATURALCHG2022       : num [1:3195] -9102 19 -511 -85 -78 ...
+ $ NATURALCHG2023       : num [1:3195] -1562 93 -109 -83 -50 ...
+ $ INTERNATIONALMIG2020 : num [1:3195] 125 0 11 0 0 1 0 0 0 2 ...
+ $ INTERNATIONALMIG2021 : num [1:3195] 1806 15 105 0 1 ...
+ $ INTERNATIONALMIG2022 : num [1:3195] 4374 22 250 2 1 ...
+ $ INTERNATIONALMIG2023 : num [1:3195] 5384 34 291 13 1 ...
+ $ DOMESTICMIG2020      : num [1:3195] 9615 100 1613 -186 -101 ...
+ $ DOMESTICMIG2021      : num [1:3195] 27715 242 6972 -313 254 ...
+ $ DOMESTICMIG2022      : num [1:3195] 28464 507 7036 237 -303 ...
+ $ DOMESTICMIG2023      : num [1:3195] 30744 491 6804 -45 -69 ...
+ $ NETMIG2020           : num [1:3195] 9740 100 1624 -186 -101 ...
+ $ NETMIG2021           : num [1:3195] 29521 257 7077 -313 255 ...
+ $ NETMIG2022           : num [1:3195] 32838 529 7286 239 -302 ...
+ $ NETMIG2023           : num [1:3195] 36128 525 7095 -32 -68 ...
+ $ RESIDUAL2020         : num [1:3195] -872 20 -123 -42 -13 17 -20 5 9 8 ...
+ $ RESIDUAL2021         : num [1:3195] 946 41 -254 -3 1 43 4 5 86 21 ...
+ $ RESIDUAL2022         : num [1:3195] -213 -25 317 13 7 -7 -2 -6 -37 -8 ...
+ $ RESIDUAL2023         : num [1:3195] -1 -2 -10 0 0 -4 -2 0 0 -1 ...
+ $ GQESTIMATESBASE2020  : num [1:3195] 127914 484 3549 2721 2141 ...
+ $ GQESTIMATES2020      : num [1:3195] 131372 484 3448 2482 2060 ...
+ $ GQESTIMATES2021      : num [1:3195] 134653 484 3351 2248 1994 ...
+ $ GQESTIMATES2022      : num [1:3195] 141654 484 3468 2702 2025 ...
+ $ GQESTIMATES2023      : num [1:3195] 144014 484 3493 2702 1894 ...
+ $ RBIRTH2021           : num [1:3195] 11.34 11.62 9.89 10.91 10.78 ...
+ $ RBIRTH2022           : num [1:3195] 11.5 11.9 10.3 11.3 10.6 ...
+ $ RBIRTH2023           : num [1:3195] 11.4 11.9 10.1 10.8 10.9 ...
+ $ RDEATH2021           : num [1:3195] 13.7 11.8 12.5 15.8 14.6 ...
+ $ RDEATH2022           : num [1:3195] 13.3 11.6 12.4 14.7 14.2 ...
+ $ RDEATH2023           : num [1:3195] 11.7 10.3 10.6 14.2 13.2 ...
+ $ RNATURALCHG2021      : num [1:3195] -2.371 -0.169 -2.585 -4.848 -3.816 ...
+ $ RNATURALCHG2022      : num [1:3195] -1.8 0.32 -2.1 -3.45 -3.52 ...
+ $ RNATURALCHG2023      : num [1:3195] -0.307 1.549 -0.436 -3.368 -2.28 ...
+ $ RINTERNATIONALMIG2021: num [1:3195] 0.3583 0.254 0.4443 0 0.0449 ...
+ $ RINTERNATIONALMIG2022: num [1:3195] 0.8641 0.37 1.0289 0.0812 0.0451 ...
+ $ RINTERNATIONALMIG2023: num [1:3195] 1.0575 0.5663 1.1639 0.5275 0.0456 ...
+ $ RDOMESTICMIG2021     : num [1:3195] 5.5 4.1 29.5 -12.6 11.4 ...
+ $ RDOMESTICMIG2022     : num [1:3195] 5.62 8.53 28.96 9.63 -13.67 ...
+ $ RDOMESTICMIG2023     : num [1:3195] 6.04 8.18 27.21 -1.83 -3.15 ...
+ $ RNETMIG2021          : num [1:3195] 5.86 4.35 29.95 -12.65 11.45 ...
+ $ RNETMIG2022          : num [1:3195] 6.49 8.9 29.99 9.71 -13.62 ...
+ $ RNETMIG2023          : num [1:3195] 7.1 8.75 28.38 -1.3 -3.1 ...
+ - attr(*, "spec")=
+  .. cols(
+  ..   SUMLEV = col_character(),
+  ..   REGION = col_double(),
+  ..   DIVISION = col_double(),
+  ..   STATE = col_character(),
+  ..   COUNTY = col_character(),
+  ..   STNAME = col_character(),
+  ..   CTYNAME = col_character(),
+  ..   ESTIMATESBASE2020 = col_double(),
+  ..   POPESTIMATE2020 = col_double(),
+  ..   POPESTIMATE2021 = col_double(),
+  ..   POPESTIMATE2022 = col_double(),
+  ..   POPESTIMATE2023 = col_double(),
+  ..   NPOPCHG2020 = col_double(),
+  ..   NPOPCHG2021 = col_double(),
+  ..   NPOPCHG2022 = col_double(),
+  ..   NPOPCHG2023 = col_double(),
+  ..   BIRTHS2020 = col_double(),
+  ..   BIRTHS2021 = col_double(),
+  ..   BIRTHS2022 = col_double(),
+  ..   BIRTHS2023 = col_double(),
+  ..   DEATHS2020 = col_double(),
+  ..   DEATHS2021 = col_double(),
+  ..   DEATHS2022 = col_double(),
+  ..   DEATHS2023 = col_double(),
+  ..   NATURALCHG2020 = col_double(),
+  ..   NATURALCHG2021 = col_double(),
+  ..   NATURALCHG2022 = col_double(),
+  ..   NATURALCHG2023 = col_double(),
+  ..   INTERNATIONALMIG2020 = col_double(),
+  ..   INTERNATIONALMIG2021 = col_double(),
+  ..   INTERNATIONALMIG2022 = col_double(),
+  ..   INTERNATIONALMIG2023 = col_double(),
+  ..   DOMESTICMIG2020 = col_double(),
+  ..   DOMESTICMIG2021 = col_double(),
+  ..   DOMESTICMIG2022 = col_double(),
+  ..   DOMESTICMIG2023 = col_double(),
+  ..   NETMIG2020 = col_double(),
+  ..   NETMIG2021 = col_double(),
+  ..   NETMIG2022 = col_double(),
+  ..   NETMIG2023 = col_double(),
+  ..   RESIDUAL2020 = col_double(),
+  ..   RESIDUAL2021 = col_double(),
+  ..   RESIDUAL2022 = col_double(),
+  ..   RESIDUAL2023 = col_double(),
+  ..   GQESTIMATESBASE2020 = col_double(),
+  ..   GQESTIMATES2020 = col_double(),
+  ..   GQESTIMATES2021 = col_double(),
+  ..   GQESTIMATES2022 = col_double(),
+  ..   GQESTIMATES2023 = col_double(),
+  ..   RBIRTH2021 = col_double(),
+  ..   RBIRTH2022 = col_double(),
+  ..   RBIRTH2023 = col_double(),
+  ..   RDEATH2021 = col_double(),
+  ..   RDEATH2022 = col_double(),
+  ..   RDEATH2023 = col_double(),
+  ..   RNATURALCHG2021 = col_double(),
+  ..   RNATURALCHG2022 = col_double(),
+  ..   RNATURALCHG2023 = col_double(),
+  ..   RINTERNATIONALMIG2021 = col_double(),
+  ..   RINTERNATIONALMIG2022 = col_double(),
+  ..   RINTERNATIONALMIG2023 = col_double(),
+  ..   RDOMESTICMIG2021 = col_double(),
+  ..   RDOMESTICMIG2022 = col_double(),
+  ..   RDOMESTICMIG2023 = col_double(),
+  ..   RNETMIG2021 = col_double(),
+  ..   RNETMIG2022 = col_double(),
+  ..   RNETMIG2023 = col_double()
+  .. )
+ - attr(*, "problems")=&lt;externalptr&gt; </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(population)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 3,195
+Columns: 67
+$ SUMLEV                &lt;chr&gt; "040", "050", "050", "050", "050", "050", "050",…
+$ REGION                &lt;dbl&gt; 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, …
+$ DIVISION              &lt;dbl&gt; 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, …
+$ STATE                 &lt;chr&gt; "01", "01", "01", "01", "01", "01", "01", "01", …
+$ COUNTY                &lt;chr&gt; "000", "001", "003", "005", "007", "009", "011",…
+$ STNAME                &lt;chr&gt; "Alabama", "Alabama", "Alabama", "Alabama", "Ala…
+$ CTYNAME               &lt;chr&gt; "Alabama", "Autauga County", "Baldwin County", "…
+$ ESTIMATESBASE2020     &lt;dbl&gt; 5024294, 58809, 231768, 25229, 22301, 59130, 103…
+$ POPESTIMATE2020       &lt;dbl&gt; 5031864, 58915, 233227, 24969, 22188, 59107, 102…
+$ POPESTIMATE2021       &lt;dbl&gt; 5050380, 59203, 239439, 24533, 22359, 59079, 101…
+$ POPESTIMATE2022       &lt;dbl&gt; 5073903, 59726, 246531, 24700, 21986, 59516, 101…
+$ POPESTIMATE2023       &lt;dbl&gt; 5108468, 60342, 253507, 24585, 21868, 59816, 989…
+$ NPOPCHG2020           &lt;dbl&gt; 7570, 106, 1459, -260, -113, -23, -131, -21, -19…
+$ NPOPCHG2021           &lt;dbl&gt; 18516, 288, 6212, -436, 171, -28, -86, -135, -56…
+$ NPOPCHG2022           &lt;dbl&gt; 23523, 523, 7092, 167, -373, 437, 0, -222, 102, …
+$ NPOPCHG2023           &lt;dbl&gt; 34565, 616, 6976, -115, -118, 300, -246, -286, 6…
+$ BIRTHS2020            &lt;dbl&gt; 13867, 162, 560, 60, 56, 137, 24, 47, 305, 87, 6…
+$ BIRTHS2021            &lt;dbl&gt; 57184, 686, 2337, 270, 240, 654, 111, 227, 1250,…
+$ BIRTHS2022            &lt;dbl&gt; 58106, 706, 2511, 278, 236, 693, 103, 207, 1334,…
+$ BIRTHS2023            &lt;dbl&gt; 58251, 714, 2531, 267, 240, 698, 102, 212, 1346,…
+$ DEATHS2020            &lt;dbl&gt; 15165, 176, 602, 92, 55, 199, 41, 88, 397, 167, …
+$ DEATHS2021            &lt;dbl&gt; 69135, 696, 2948, 390, 325, 875, 160, 297, 1843,…
+$ DEATHS2022            &lt;dbl&gt; 67208, 687, 3022, 363, 314, 846, 138, 312, 1852,…
+$ DEATHS2023            &lt;dbl&gt; 59813, 621, 2640, 350, 290, 776, 133, 299, 1649,…
+$ NATURALCHG2020        &lt;dbl&gt; -1298, -14, -42, -32, 1, -62, -17, -41, -92, -80…
+$ NATURALCHG2021        &lt;dbl&gt; -11951, -10, -611, -120, -85, -221, -49, -70, -5…
+$ NATURALCHG2022        &lt;dbl&gt; -9102, 19, -511, -85, -78, -153, -35, -105, -518…
+$ NATURALCHG2023        &lt;dbl&gt; -1562, 93, -109, -83, -50, -78, -31, -87, -303, …
+$ INTERNATIONALMIG2020  &lt;dbl&gt; 125, 0, 11, 0, 0, 1, 0, 0, 0, 2, 0, 1, 0, 0, 0, …
+$ INTERNATIONALMIG2021  &lt;dbl&gt; 1806, 15, 105, 0, 1, 9, 1, 5, 12, 22, 7, 20, 1, …
+$ INTERNATIONALMIG2022  &lt;dbl&gt; 4374, 22, 250, 2, 1, 8, 5, 6, 22, 49, 14, 26, 2,…
+$ INTERNATIONALMIG2023  &lt;dbl&gt; 5384, 34, 291, 13, 1, 24, 6, 8, 29, 55, 14, 49, …
+$ DOMESTICMIG2020       &lt;dbl&gt; 9615, 100, 1613, -186, -101, 21, -94, 15, -115, …
+$ DOMESTICMIG2021       &lt;dbl&gt; 27715, 242, 6972, -313, 254, 141, -42, -75, -70,…
+$ DOMESTICMIG2022       &lt;dbl&gt; 28464, 507, 7036, 237, -303, 589, 32, -117, 635,…
+$ DOMESTICMIG2023       &lt;dbl&gt; 30744, 491, 6804, -45, -69, 358, -219, -207, 923…
+$ NETMIG2020            &lt;dbl&gt; 9740, 100, 1624, -186, -101, 22, -94, 15, -115, …
+$ NETMIG2021            &lt;dbl&gt; 29521, 257, 7077, -313, 255, 150, -41, -70, -58,…
+$ NETMIG2022            &lt;dbl&gt; 32838, 529, 7286, 239, -302, 597, 37, -111, 657,…
+$ NETMIG2023            &lt;dbl&gt; 36128, 525, 7095, -32, -68, 382, -213, -199, 952…
+$ RESIDUAL2020          &lt;dbl&gt; -872, 20, -123, -42, -13, 17, -20, 5, 9, 8, -3, …
+$ RESIDUAL2021          &lt;dbl&gt; 946, 41, -254, -3, 1, 43, 4, 5, 86, 21, 2, 18, 7…
+$ RESIDUAL2022          &lt;dbl&gt; -213, -25, 317, 13, 7, -7, -2, -6, -37, -8, 7, 1…
+$ RESIDUAL2023          &lt;dbl&gt; -1, -2, -10, 0, 0, -4, -2, 0, 0, -1, -4, -3, -1,…
+$ GQESTIMATESBASE2020   &lt;dbl&gt; 127914, 484, 3549, 2721, 2141, 616, 1705, 285, 5…
+$ GQESTIMATES2020       &lt;dbl&gt; 131372, 484, 3448, 2482, 2060, 616, 1631, 285, 5…
+$ GQESTIMATES2021       &lt;dbl&gt; 134653, 484, 3351, 2248, 1994, 616, 1578, 285, 5…
+$ GQESTIMATES2022       &lt;dbl&gt; 141654, 484, 3468, 2702, 2025, 616, 1648, 285, 5…
+$ GQESTIMATES2023       &lt;dbl&gt; 144014, 484, 3493, 2702, 1894, 616, 1615, 285, 5…
+$ RBIRTH2021            &lt;dbl&gt; 11.343506, 11.615503, 9.888589, 10.908650, 10.77…
+$ RBIRTH2022            &lt;dbl&gt; 11.478541, 11.872630, 10.333971, 11.293238, 10.6…
+$ RBIRTH2023            &lt;dbl&gt; 11.441539, 11.893260, 10.123231, 10.834940, 10.9…
+$ RDEATH2021            &lt;dbl&gt; 13.71421, 11.78483, 12.47392, 15.75694, 14.59133…
+$ RDEATH2022            &lt;dbl&gt; 13.27659, 11.55311, 12.43698, 14.74621, 14.16169…
+$ RDEATH2023            &lt;dbl&gt; 11.74834, 10.34414, 10.55920, 14.20310, 13.22570…
+$ RNATURALCHG2021       &lt;dbl&gt; -2.3707024, -0.1693222, -2.5853351, -4.8482890, …
+$ RNATURALCHG2022       &lt;dbl&gt; -1.7980533, 0.3195184, -2.1030105, -3.4529685, -…
+$ RNATURALCHG2023       &lt;dbl&gt; -0.3068048, 1.5491222, -0.4359669, -3.3681648, -…
+$ RINTERNATIONALMIG2021 &lt;dbl&gt; 0.35825358, 0.25398330, 0.44428836, 0.00000000, …
+$ RINTERNATIONALMIG2022 &lt;dbl&gt; 0.86406119, 0.36996864, 1.02887009, 0.08124632, …
+$ RINTERNATIONALMIG2023 &lt;dbl&gt; 1.05751401, 0.56634574, 1.16391154, 0.52754388, …
+$ RDOMESTICMIG2021      &lt;dbl&gt; 5.4977840, 4.0975973, 29.5007468, -12.6459537, 1…
+$ RDOMESTICMIG2022      &lt;dbl&gt; 5.6229167, 8.5260954, 28.9565200, 9.6276887, -13…
+$ RDOMESTICMIG2023      &lt;dbl&gt; 6.0386721, 8.1786987, 27.2139317, -1.8261134, -3…
+$ RNETMIG2021           &lt;dbl&gt; 5.8560376, 4.3515806, 29.9450352, -12.6459537, 1…
+$ RNETMIG2022           &lt;dbl&gt; 6.4869779, 8.8960640, 29.9853900, 9.7089351, -13…
+$ RNETMIG2023           &lt;dbl&gt; 7.09618614, 8.74504447, 28.37784328, -1.29856954…</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(skimr)</span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a><span class="fu">skim</span>(population)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: There was 1 warning in `dplyr::summarize()`.
+ℹ In argument: `dplyr::across(tidyselect::any_of(variable_names),
+  mangled_skimmers$funs)`.
+ℹ In group 0: .
+Caused by warning:
+! There were 2 warnings in `dplyr::summarize()`.
+The first warning was:
+ℹ In argument: `dplyr::across(tidyselect::any_of(variable_names),
+  mangled_skimmers$funs)`.
+Caused by warning in `grepl()`:
+! unable to translate 'Do&lt;f1&gt;a Ana County' to a wide string
+ℹ Run `dplyr::last_dplyr_warnings()` to see the 1 remaining warning.</code></pre>
+</div>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Data summary</caption>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Name</td>
+<td style="text-align: left;">population</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Number of rows</td>
+<td style="text-align: left;">3195</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Number of columns</td>
+<td style="text-align: left;">67</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">_______________________</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Column type frequency:</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">character</td>
+<td style="text-align: left;">5</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">numeric</td>
+<td style="text-align: left;">62</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">________________________</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Group variables</td>
+<td style="text-align: left;">None</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Variable type: character</strong></p>
+<table class="caption-top table table-sm table-striped small">
+<colgroup>
+<col style="width: 19%">
+<col style="width: 13%">
+<col style="width: 19%">
+<col style="width: 5%">
+<col style="width: 5%">
+<col style="width: 8%">
+<col style="width: 12%">
+<col style="width: 15%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">skim_variable</th>
+<th style="text-align: right;">n_missing</th>
+<th style="text-align: right;">complete_rate</th>
+<th style="text-align: right;">min</th>
+<th style="text-align: right;">max</th>
+<th style="text-align: right;">empty</th>
+<th style="text-align: right;">n_unique</th>
+<th style="text-align: right;">whitespace</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">SUMLEV</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">STATE</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">51</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">COUNTY</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">330</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">STNAME</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">20</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">51</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">CTYNAME</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">46</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1932</td>
+<td style="text-align: right;">0</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Variable type: numeric</strong></p>
+<table class="caption-top table table-sm table-striped small">
+<colgroup>
+<col style="width: 17%">
+<col style="width: 8%">
+<col style="width: 11%">
+<col style="width: 8%">
+<col style="width: 8%">
+<col style="width: 8%">
+<col style="width: 7%">
+<col style="width: 7%">
+<col style="width: 7%">
+<col style="width: 9%">
+<col style="width: 4%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">skim_variable</th>
+<th style="text-align: right;">n_missing</th>
+<th style="text-align: right;">complete_rate</th>
+<th style="text-align: right;">mean</th>
+<th style="text-align: right;">sd</th>
+<th style="text-align: right;">p0</th>
+<th style="text-align: right;">p25</th>
+<th style="text-align: right;">p50</th>
+<th style="text-align: right;">p75</th>
+<th style="text-align: right;">p100</th>
+<th style="text-align: left;">hist</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">REGION</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">2.67</td>
+<td style="text-align: right;">0.81</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">2.00</td>
+<td style="text-align: right;">3.00</td>
+<td style="text-align: right;">3.00</td>
+<td style="text-align: right;">4.00</td>
+<td style="text-align: left;">▁▆▁▇▂</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">DIVISION</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">5.19</td>
+<td style="text-align: right;">1.98</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">4.00</td>
+<td style="text-align: right;">5.00</td>
+<td style="text-align: right;">7.00</td>
+<td style="text-align: right;">9.00</td>
+<td style="text-align: left;">▂▇▅▆▃</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ESTIMATESBASE2020</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">207489.80</td>
+<td style="text-align: right;">1269729.53</td>
+<td style="text-align: right;">63.00</td>
+<td style="text-align: right;">10973.50</td>
+<td style="text-align: right;">26587.00</td>
+<td style="text-align: right;">74124.00</td>
+<td style="text-align: right;">39538212.00</td>
+<td style="text-align: left;">▇▁▁▁▁</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">POPESTIMATE2020</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">207528.60</td>
+<td style="text-align: right;">1269809.88</td>
+<td style="text-align: right;">65.00</td>
+<td style="text-align: right;">10958.00</td>
+<td style="text-align: right;">26560.00</td>
+<td style="text-align: right;">74037.00</td>
+<td style="text-align: right;">39503200.00</td>
+<td style="text-align: left;">▇▁▁▁▁</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">POPESTIMATE2021</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">207855.38</td>
+<td style="text-align: right;">1268703.20</td>
+<td style="text-align: right;">54.00</td>
+<td style="text-align: right;">10944.00</td>
+<td style="text-align: right;">26461.00</td>
+<td style="text-align: right;">74043.00</td>
+<td style="text-align: right;">39145060.00</td>
+<td style="text-align: left;">▇▁▁▁▁</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">POPESTIMATE2022</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">208620.60</td>
+<td style="text-align: right;">1273172.72</td>
+<td style="text-align: right;">44.00</td>
+<td style="text-align: right;">10950.00</td>
+<td style="text-align: right;">26643.00</td>
+<td style="text-align: right;">74678.00</td>
+<td style="text-align: right;">39040616.00</td>
+<td style="text-align: left;">▇▁▁▁▁</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">POPESTIMATE2023</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">209649.39</td>
+<td style="text-align: right;">1279057.10</td>
+<td style="text-align: right;">43.00</td>
+<td style="text-align: right;">10926.00</td>
+<td style="text-align: right;">26668.00</td>
+<td style="text-align: right;">75382.50</td>
+<td style="text-align: right;">38965193.00</td>
+<td style="text-align: left;">▇▁▁▁▁</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">NPOPCHG2020</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">38.80</td>
+<td style="text-align: right;">3171.29</td>
+<td style="text-align: right;">-97610.00</td>
+<td style="text-align: right;">-34.00</td>
+<td style="text-align: right;">-2.00</td>
+<td style="text-align: right;">46.00</td>
+<td style="text-align: right;">88902.00</td>
+<td style="text-align: left;">▁▁▇▁▁</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">NPOPCHG2021</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">326.79</td>
+<td style="text-align: right;">12591.22</td>
+<td style="text-align: right;">-358140.00</td>
+<td style="text-align: right;">-95.50</td>
+<td style="text-align: right;">23.00</td>
+<td style="text-align: right;">319.50</td>
+<td style="text-align: right;">326925.00</td>
+<td style="text-align: left;">▁▁▇▁▁</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">NPOPCHG2022</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">765.22</td>
+<td style="text-align: right;">13317.28</td>
+<td style="text-align: right;">-181326.00</td>
+<td style="text-align: right;">-114.00</td>
+<td style="text-align: right;">10.00</td>
+<td style="text-align: right;">299.00</td>
+<td style="text-align: right;">468562.00</td>
+<td style="text-align: left;">▁▇▁▁▁</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">NPOPCHG2023</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1028.78</td>
+<td style="text-align: right;">12083.78</td>
+<td style="text-align: right;">-101984.00</td>
+<td style="text-align: right;">-59.00</td>
+<td style="text-align: right;">38.00</td>
+<td style="text-align: right;">340.00</td>
+<td style="text-align: right;">473453.00</td>
+<td style="text-align: left;">▇▁▁▁▁</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">BIRTHS2020</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">559.70</td>
+<td style="text-align: right;">3417.00</td>
+<td style="text-align: right;">0.00</td>
+<td style="text-align: right;">28.00</td>
+<td style="text-align: right;">68.00</td>
+<td style="text-align: right;">194.00</td>
+<td style="text-align: right;">103133.00</td>
+<td style="text-align: left;">▇▁▁▁▁</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">BIRTHS2021</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">2243.79</td>
+<td style="text-align: right;">13753.20</td>
+<td style="text-align: right;">0.00</td>
+<td style="text-align: right;">115.00</td>
+<td style="text-align: right;">280.00</td>
+<td style="text-align: right;">780.50</td>
+<td style="text-align: right;">412506.00</td>
+<td style="text-align: left;">▇▁▁▁▁</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">BIRTHS2022</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">2303.13</td>
+<td style="text-align: right;">14206.63</td>
+<td style="text-align: right;">0.00</td>
+<td style="text-align: right;">114.00</td>
+<td style="text-align: right;">284.00</td>
+<td style="text-align: right;">809.50</td>
+<td style="text-align: right;">423922.00</td>
+<td style="text-align: left;">▇▁▁▁▁</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">BIRTHS2023</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">2286.92</td>
+<td style="text-align: right;">14125.85</td>
+<td style="text-align: right;">0.00</td>
+<td style="text-align: right;">113.00</td>
+<td style="text-align: right;">283.00</td>
+<td style="text-align: right;">790.00</td>
+<td style="text-align: right;">414120.00</td>
+<td style="text-align: left;">▇▁▁▁▁</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">DEATHS2020</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">533.35</td>
+<td style="text-align: right;">3106.38</td>
+<td style="text-align: right;">0.00</td>
+<td style="text-align: right;">33.00</td>
+<td style="text-align: right;">81.00</td>
+<td style="text-align: right;">204.50</td>
+<td style="text-align: right;">74587.00</td>
+<td style="text-align: left;">▇▁▁▁▁</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">DEATHS2021</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">2152.38</td>
+<td style="text-align: right;">12467.95</td>
+<td style="text-align: right;">0.00</td>
+<td style="text-align: right;">161.50</td>
+<td style="text-align: right;">372.00</td>
+<td style="text-align: right;">919.00</td>
+<td style="text-align: right;">345181.00</td>
+<td style="text-align: left;">▇▁▁▁▁</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">DEATHS2022</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">2163.43</td>
+<td style="text-align: right;">12275.20</td>
+<td style="text-align: right;">0.00</td>
+<td style="text-align: right;">162.00</td>
+<td style="text-align: right;">385.00</td>
+<td style="text-align: right;">949.00</td>
+<td style="text-align: right;">318145.00</td>
+<td style="text-align: left;">▇▁▁▁▁</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">DEATHS2023</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1971.12</td>
+<td style="text-align: right;">11210.75</td>
+<td style="text-align: right;">0.00</td>
+<td style="text-align: right;">154.00</td>
+<td style="text-align: right;">361.00</td>
+<td style="text-align: right;">868.50</td>
+<td style="text-align: right;">302704.00</td>
+<td style="text-align: left;">▇▁▁▁▁</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">NATURALCHG2020</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">26.35</td>
+<td style="text-align: right;">966.07</td>
+<td style="text-align: right;">-19642.00</td>
+<td style="text-align: right;">-24.00</td>
+<td style="text-align: right;">-5.00</td>
+<td style="text-align: right;">8.50</td>
+<td style="text-align: right;">32536.00</td>
+<td style="text-align: left;">▁▇▁▁▁</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">NATURALCHG2021</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">91.42</td>
+<td style="text-align: right;">2675.19</td>
+<td style="text-align: right;">-42447.00</td>
+<td style="text-align: right;">-141.00</td>
+<td style="text-align: right;">-54.00</td>
+<td style="text-align: right;">-2.00</td>
+<td style="text-align: right;">94499.00</td>
+<td style="text-align: left;">▁▇▁▁▁</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">NATURALCHG2022</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">139.70</td>
+<td style="text-align: right;">3390.04</td>
+<td style="text-align: right;">-38217.00</td>
+<td style="text-align: right;">-144.00</td>
+<td style="text-align: right;">-53.00</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">122279.00</td>
+<td style="text-align: left;">▁▇▁▁▁</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">NATURALCHG2023</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">315.80</td>
+<td style="text-align: right;">3897.15</td>
+<td style="text-align: right;">-11079.00</td>
+<td style="text-align: right;">-104.00</td>
+<td style="text-align: right;">-35.00</td>
+<td style="text-align: right;">20.50</td>
+<td style="text-align: right;">158253.00</td>
+<td style="text-align: left;">▇▁▁▁▁</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">INTERNATIONALMIG2020</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">12.45</td>
+<td style="text-align: right;">87.92</td>
+<td style="text-align: right;">-17.00</td>
+<td style="text-align: right;">0.00</td>
+<td style="text-align: right;">0.00</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">2840.00</td>
+<td style="text-align: left;">▇▁▁▁▁</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">INTERNATIONALMIG2021</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">235.37</td>
+<td style="text-align: right;">1761.14</td>
+<td style="text-align: right;">-170.00</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">5.00</td>
+<td style="text-align: right;">32.00</td>
+<td style="text-align: right;">46865.00</td>
+<td style="text-align: left;">▇▁▁▁▁</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">INTERNATIONALMIG2022</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">625.52</td>
+<td style="text-align: right;">4738.05</td>
+<td style="text-align: right;">-56.00</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">14.00</td>
+<td style="text-align: right;">79.00</td>
+<td style="text-align: right;">126517.00</td>
+<td style="text-align: left;">▇▁▁▁▁</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">INTERNATIONALMIG2023</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">712.98</td>
+<td style="text-align: right;">5713.43</td>
+<td style="text-align: right;">-30.00</td>
+<td style="text-align: right;">2.00</td>
+<td style="text-align: right;">16.00</td>
+<td style="text-align: right;">86.00</td>
+<td style="text-align: right;">178432.00</td>
+<td style="text-align: left;">▇▁▁▁▁</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">DOMESTICMIG2020</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0.00</td>
+<td style="text-align: right;">2767.66</td>
+<td style="text-align: right;">-72398.00</td>
+<td style="text-align: right;">-31.00</td>
+<td style="text-align: right;">-2.00</td>
+<td style="text-align: right;">44.00</td>
+<td style="text-align: right;">61782.00</td>
+<td style="text-align: left;">▁▁▇▁▁</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">DOMESTICMIG2021</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0.00</td>
+<td style="text-align: right;">13260.63</td>
+<td style="text-align: right;">-458862.00</td>
+<td style="text-align: right;">-57.00</td>
+<td style="text-align: right;">59.00</td>
+<td style="text-align: right;">385.50</td>
+<td style="text-align: right;">244619.00</td>
+<td style="text-align: left;">▁▁▁▇▁</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">DOMESTICMIG2022</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0.00</td>
+<td style="text-align: right;">12530.66</td>
+<td style="text-align: right;">-332785.00</td>
+<td style="text-align: right;">-76.00</td>
+<td style="text-align: right;">44.00</td>
+<td style="text-align: right;">328.00</td>
+<td style="text-align: right;">317923.00</td>
+<td style="text-align: left;">▁▁▇▁▁</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">DOMESTICMIG2023</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0.00</td>
+<td style="text-align: right;">10061.39</td>
+<td style="text-align: right;">-338371.00</td>
+<td style="text-align: right;">-47.00</td>
+<td style="text-align: right;">48.00</td>
+<td style="text-align: right;">297.00</td>
+<td style="text-align: right;">194438.00</td>
+<td style="text-align: left;">▁▁▁▇▁</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">NETMIG2020</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">12.45</td>
+<td style="text-align: right;">2773.33</td>
+<td style="text-align: right;">-71055.00</td>
+<td style="text-align: right;">-31.00</td>
+<td style="text-align: right;">-2.00</td>
+<td style="text-align: right;">45.00</td>
+<td style="text-align: right;">64622.00</td>
+<td style="text-align: left;">▁▁▇▁▁</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">NETMIG2021</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">235.37</td>
+<td style="text-align: right;">12987.91</td>
+<td style="text-align: right;">-414746.00</td>
+<td style="text-align: right;">-47.00</td>
+<td style="text-align: right;">70.00</td>
+<td style="text-align: right;">409.00</td>
+<td style="text-align: right;">291484.00</td>
+<td style="text-align: left;">▁▁▇▁▁</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">NETMIG2022</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">625.52</td>
+<td style="text-align: right;">12909.84</td>
+<td style="text-align: right;">-221056.00</td>
+<td style="text-align: right;">-50.00</td>
+<td style="text-align: right;">68.00</td>
+<td style="text-align: right;">399.00</td>
+<td style="text-align: right;">439156.00</td>
+<td style="text-align: left;">▁▇▁▁▁</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">NETMIG2023</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">712.98</td>
+<td style="text-align: right;">10791.78</td>
+<td style="text-align: right;">-187389.00</td>
+<td style="text-align: right;">-21.00</td>
+<td style="text-align: right;">84.00</td>
+<td style="text-align: right;">390.50</td>
+<td style="text-align: right;">372870.00</td>
+<td style="text-align: left;">▁▇▁▁▁</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">RESIDUAL2020</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0.00</td>
+<td style="text-align: right;">267.87</td>
+<td style="text-align: right;">-6913.00</td>
+<td style="text-align: right;">-2.00</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">8.00</td>
+<td style="text-align: right;">3145.00</td>
+<td style="text-align: left;">▁▁▁▇▁</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">RESIDUAL2021</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0.00</td>
+<td style="text-align: right;">461.82</td>
+<td style="text-align: right;">-12120.00</td>
+<td style="text-align: right;">-4.00</td>
+<td style="text-align: right;">3.00</td>
+<td style="text-align: right;">18.00</td>
+<td style="text-align: right;">5551.00</td>
+<td style="text-align: left;">▁▁▁▇▁</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">RESIDUAL2022</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0.00</td>
+<td style="text-align: right;">362.33</td>
+<td style="text-align: right;">-4122.00</td>
+<td style="text-align: right;">-13.00</td>
+<td style="text-align: right;">-2.00</td>
+<td style="text-align: right;">5.00</td>
+<td style="text-align: right;">13874.00</td>
+<td style="text-align: left;">▁▇▁▁▁</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">RESIDUAL2023</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0.00</td>
+<td style="text-align: right;">25.86</td>
+<td style="text-align: right;">-609.00</td>
+<td style="text-align: right;">-1.00</td>
+<td style="text-align: right;">0.00</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">550.00</td>
+<td style="text-align: left;">▁▁▇▁▁</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">GQESTIMATESBASE2020</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">5167.24</td>
+<td style="text-align: right;">30377.15</td>
+<td style="text-align: right;">0.00</td>
+<td style="text-align: right;">168.50</td>
+<td style="text-align: right;">618.00</td>
+<td style="text-align: right;">2360.50</td>
+<td style="text-align: right;">917958.00</td>
+<td style="text-align: left;">▇▁▁▁▁</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">GQESTIMATES2020</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">5082.55</td>
+<td style="text-align: right;">29845.61</td>
+<td style="text-align: right;">0.00</td>
+<td style="text-align: right;">168.00</td>
+<td style="text-align: right;">615.00</td>
+<td style="text-align: right;">2354.50</td>
+<td style="text-align: right;">897669.00</td>
+<td style="text-align: left;">▇▁▁▁▁</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">GQESTIMATES2021</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">4956.13</td>
+<td style="text-align: right;">28733.69</td>
+<td style="text-align: right;">0.00</td>
+<td style="text-align: right;">165.00</td>
+<td style="text-align: right;">598.00</td>
+<td style="text-align: right;">2264.00</td>
+<td style="text-align: right;">771170.00</td>
+<td style="text-align: left;">▇▁▁▁▁</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">GQESTIMATES2022</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">5114.03</td>
+<td style="text-align: right;">30102.45</td>
+<td style="text-align: right;">0.00</td>
+<td style="text-align: right;">165.50</td>
+<td style="text-align: right;">600.00</td>
+<td style="text-align: right;">2324.50</td>
+<td style="text-align: right;">886334.00</td>
+<td style="text-align: left;">▇▁▁▁▁</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">GQESTIMATES2023</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">5141.31</td>
+<td style="text-align: right;">30259.02</td>
+<td style="text-align: right;">0.00</td>
+<td style="text-align: right;">164.50</td>
+<td style="text-align: right;">603.00</td>
+<td style="text-align: right;">2334.50</td>
+<td style="text-align: right;">891995.00</td>
+<td style="text-align: left;">▇▁▁▁▁</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">RBIRTH2021</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">10.67</td>
+<td style="text-align: right;">2.39</td>
+<td style="text-align: right;">0.00</td>
+<td style="text-align: right;">9.27</td>
+<td style="text-align: right;">10.52</td>
+<td style="text-align: right;">11.92</td>
+<td style="text-align: right;">30.73</td>
+<td style="text-align: left;">▁▇▂▁▁</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">RBIRTH2022</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">10.82</td>
+<td style="text-align: right;">2.39</td>
+<td style="text-align: right;">0.00</td>
+<td style="text-align: right;">9.39</td>
+<td style="text-align: right;">10.72</td>
+<td style="text-align: right;">12.04</td>
+<td style="text-align: right;">26.40</td>
+<td style="text-align: left;">▁▇▇▁▁</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">RBIRTH2023</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">10.70</td>
+<td style="text-align: right;">2.46</td>
+<td style="text-align: right;">0.00</td>
+<td style="text-align: right;">9.21</td>
+<td style="text-align: right;">10.59</td>
+<td style="text-align: right;">11.99</td>
+<td style="text-align: right;">26.81</td>
+<td style="text-align: left;">▁▇▇▁▁</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">RDEATH2021</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">13.56</td>
+<td style="text-align: right;">3.81</td>
+<td style="text-align: right;">0.00</td>
+<td style="text-align: right;">10.96</td>
+<td style="text-align: right;">13.56</td>
+<td style="text-align: right;">15.98</td>
+<td style="text-align: right;">50.42</td>
+<td style="text-align: left;">▂▇▁▁▁</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">RDEATH2022</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">13.70</td>
+<td style="text-align: right;">3.90</td>
+<td style="text-align: right;">0.00</td>
+<td style="text-align: right;">11.10</td>
+<td style="text-align: right;">13.72</td>
+<td style="text-align: right;">16.09</td>
+<td style="text-align: right;">81.63</td>
+<td style="text-align: left;">▇▂▁▁▁</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">RDEATH2023</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">12.79</td>
+<td style="text-align: right;">3.65</td>
+<td style="text-align: right;">0.00</td>
+<td style="text-align: right;">10.27</td>
+<td style="text-align: right;">12.83</td>
+<td style="text-align: right;">15.07</td>
+<td style="text-align: right;">45.98</td>
+<td style="text-align: left;">▂▇▁▁▁</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">RNATURALCHG2021</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">-2.89</td>
+<td style="text-align: right;">4.63</td>
+<td style="text-align: right;">-50.42</td>
+<td style="text-align: right;">-5.78</td>
+<td style="text-align: right;">-2.99</td>
+<td style="text-align: right;">-0.14</td>
+<td style="text-align: right;">21.27</td>
+<td style="text-align: left;">▁▁▂▇▁</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">RNATURALCHG2022</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">-2.88</td>
+<td style="text-align: right;">4.86</td>
+<td style="text-align: right;">-81.63</td>
+<td style="text-align: right;">-5.88</td>
+<td style="text-align: right;">-2.88</td>
+<td style="text-align: right;">0.06</td>
+<td style="text-align: right;">18.28</td>
+<td style="text-align: left;">▁▁▁▇▅</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">RNATURALCHG2023</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">-2.08</td>
+<td style="text-align: right;">4.65</td>
+<td style="text-align: right;">-45.98</td>
+<td style="text-align: right;">-5.02</td>
+<td style="text-align: right;">-2.07</td>
+<td style="text-align: right;">0.86</td>
+<td style="text-align: right;">19.13</td>
+<td style="text-align: left;">▁▁▁▇▁</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">RINTERNATIONALMIG2021</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0.47</td>
+<td style="text-align: right;">0.82</td>
+<td style="text-align: right;">-2.05</td>
+<td style="text-align: right;">0.03</td>
+<td style="text-align: right;">0.22</td>
+<td style="text-align: right;">0.60</td>
+<td style="text-align: right;">15.76</td>
+<td style="text-align: left;">▇▁▁▁▁</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">RINTERNATIONALMIG2022</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1.24</td>
+<td style="text-align: right;">2.07</td>
+<td style="text-align: right;">-1.50</td>
+<td style="text-align: right;">0.10</td>
+<td style="text-align: right;">0.59</td>
+<td style="text-align: right;">1.59</td>
+<td style="text-align: right;">31.09</td>
+<td style="text-align: left;">▇▁▁▁▁</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">RINTERNATIONALMIG2023</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1.34</td>
+<td style="text-align: right;">2.14</td>
+<td style="text-align: right;">-1.55</td>
+<td style="text-align: right;">0.13</td>
+<td style="text-align: right;">0.66</td>
+<td style="text-align: right;">1.74</td>
+<td style="text-align: right;">31.75</td>
+<td style="text-align: left;">▇▁▁▁▁</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">RDOMESTICMIG2021</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">4.71</td>
+<td style="text-align: right;">15.61</td>
+<td style="text-align: right;">-120.73</td>
+<td style="text-align: right;">-3.37</td>
+<td style="text-align: right;">3.46</td>
+<td style="text-align: right;">11.94</td>
+<td style="text-align: right;">116.03</td>
+<td style="text-align: left;">▁▁▇▁▁</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">RDOMESTICMIG2022</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">3.13</td>
+<td style="text-align: right;">16.38</td>
+<td style="text-align: right;">-371.88</td>
+<td style="text-align: right;">-4.33</td>
+<td style="text-align: right;">2.66</td>
+<td style="text-align: right;">10.50</td>
+<td style="text-align: right;">82.05</td>
+<td style="text-align: left;">▁▁▁▂▇</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">RDOMESTICMIG2023</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">3.60</td>
+<td style="text-align: right;">12.53</td>
+<td style="text-align: right;">-130.32</td>
+<td style="text-align: right;">-3.09</td>
+<td style="text-align: right;">2.77</td>
+<td style="text-align: right;">9.91</td>
+<td style="text-align: right;">65.97</td>
+<td style="text-align: left;">▁▁▁▇▁</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">RNETMIG2021</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">5.18</td>
+<td style="text-align: right;">15.48</td>
+<td style="text-align: right;">-119.57</td>
+<td style="text-align: right;">-2.99</td>
+<td style="text-align: right;">3.93</td>
+<td style="text-align: right;">12.23</td>
+<td style="text-align: right;">117.83</td>
+<td style="text-align: left;">▁▁▇▁▁</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">RNETMIG2022</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">4.37</td>
+<td style="text-align: right;">16.03</td>
+<td style="text-align: right;">-361.10</td>
+<td style="text-align: right;">-2.98</td>
+<td style="text-align: right;">3.70</td>
+<td style="text-align: right;">11.59</td>
+<td style="text-align: right;">87.05</td>
+<td style="text-align: left;">▁▁▁▃▇</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">RNETMIG2023</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">4.94</td>
+<td style="text-align: right;">12.25</td>
+<td style="text-align: right;">-130.89</td>
+<td style="text-align: right;">-1.49</td>
+<td style="text-align: right;">3.89</td>
+<td style="text-align: right;">10.82</td>
+<td style="text-align: right;">66.97</td>
+<td style="text-align: left;">▁▁▁▇▁</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="fu">range</span>(population<span class="sc">$</span>POPESTIMATE2021, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1]       54 39145060</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>combined_data <span class="ot">=</span> <span class="fu">inner_join</span>(colorado, <span class="fu">select</span>(pop, fips, <span class="at">pop =</span> POPESTIMATE2021), <span class="at">by =</span> <span class="st">'fips'</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(date <span class="sc">==</span> my.date) <span class="sc">%&gt;%</span></span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">cumPerCap =</span> cases <span class="sc">/</span> pop, <span class="at">newCasesPerCap =</span> new_cases <span class="sc">/</span> pop, <span class="at">newDeathsPerCap =</span> new_deaths <span class="sc">/</span> pop )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(flextable)</span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>combined_data <span class="sc">%&gt;%</span></span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>   <span class="fu">select</span>(<span class="at">County =</span> county, <span class="at">Cases =</span> cumPerCap) <span class="sc">%&gt;%</span></span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a>   <span class="fu">slice_max</span>(Cases, <span class="at">n =</span> <span class="dv">5</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">flextable</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_caption</span>(<span class="st">"Top 5 Counties with Most Cumulative Cases Per Capita on 2021-01-01"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="tabwid"><style>.cl-068510a4{}.cl-0682abf2{font-family:'Helvetica';font-size:11pt;font-weight:normal;font-style:normal;text-decoration:none;color:rgba(0, 0, 0, 1.00);background-color:transparent;}.cl-06839ec2{margin:0;text-align:left;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:5pt;padding-top:5pt;padding-left:5pt;padding-right:5pt;line-height: 1;background-color:transparent;}.cl-06839ec3{margin:0;text-align:right;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:5pt;padding-top:5pt;padding-left:5pt;padding-right:5pt;line-height: 1;background-color:transparent;}.cl-0683a8ea{width:0.75in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 1.5pt solid rgba(102, 102, 102, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-0683a8eb{width:0.75in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 1.5pt solid rgba(102, 102, 102, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-0683a8ec{width:0.75in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-0683a8f4{width:0.75in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-0683a8f5{width:0.75in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-0683a8f6{width:0.75in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}</style><table data-quarto-disable-processing="true" class="cl-068510a4"><thead><tr style="overflow-wrap:break-word;"><th class="cl-0683a8ea"><p class="cl-06839ec2"><span class="cl-0682abf2">County</span></p></th><th class="cl-0683a8eb"><p class="cl-06839ec3"><span class="cl-0682abf2">Cases</span></p></th></tr></thead><tbody><tr style="overflow-wrap:break-word;"><td class="cl-0683a8ec"><p class="cl-06839ec2"><span class="cl-0682abf2">Crowley</span></p></td><td class="cl-0683a8f4"><p class="cl-06839ec3"><span class="cl-0682abf2">0.5117698</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-0683a8ec"><p class="cl-06839ec2"><span class="cl-0682abf2">Bent</span></p></td><td class="cl-0683a8f4"><p class="cl-06839ec3"><span class="cl-0682abf2">0.4118749</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-0683a8ec"><p class="cl-06839ec2"><span class="cl-0682abf2">Pitkin</span></p></td><td class="cl-0683a8f4"><p class="cl-06839ec3"><span class="cl-0682abf2">0.3429659</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-0683a8ec"><p class="cl-06839ec2"><span class="cl-0682abf2">Lincoln</span></p></td><td class="cl-0683a8f4"><p class="cl-06839ec3"><span class="cl-0682abf2">0.3424082</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-0683a8f5"><p class="cl-06839ec2"><span class="cl-0682abf2">Logan</span></p></td><td class="cl-0683a8f6"><p class="cl-06839ec3"><span class="cl-0682abf2">0.3047701</span></p></td></tr></tbody></table></div>
+</div>
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>combined_data <span class="sc">%&gt;%</span></span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="at">County =</span> county, <span class="at">Cases =</span> newCasesPerCap) <span class="sc">%&gt;%</span></span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_max</span>(Cases, <span class="at">n =</span> <span class="dv">5</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">flextable</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_caption</span>(<span class="at">caption =</span> <span class="st">"Top 5 Counties with Most New Cases Per Capita on 2021-01-01"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="tabwid"><style>.cl-068a9420{}.cl-06884738{font-family:'Helvetica';font-size:11pt;font-weight:normal;font-style:normal;text-decoration:none;color:rgba(0, 0, 0, 1.00);background-color:transparent;}.cl-06893530{margin:0;text-align:left;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:5pt;padding-top:5pt;padding-left:5pt;padding-right:5pt;line-height: 1;background-color:transparent;}.cl-06893531{margin:0;text-align:right;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:5pt;padding-top:5pt;padding-left:5pt;padding-right:5pt;line-height: 1;background-color:transparent;}.cl-06893f44{width:0.75in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 1.5pt solid rgba(102, 102, 102, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-06893f4e{width:0.75in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 1.5pt solid rgba(102, 102, 102, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-06893f4f{width:0.75in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-06893f50{width:0.75in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-06893f58{width:0.75in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-06893f59{width:0.75in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}</style><table data-quarto-disable-processing="true" class="cl-068a9420"><thead><tr style="overflow-wrap:break-word;"><th class="cl-06893f44"><p class="cl-06893530"><span class="cl-06884738">County</span></p></th><th class="cl-06893f4e"><p class="cl-06893531"><span class="cl-06884738">Cases</span></p></th></tr></thead><tbody><tr style="overflow-wrap:break-word;"><td class="cl-06893f4f"><p class="cl-06893530"><span class="cl-06884738">Crowley</span></p></td><td class="cl-06893f50"><p class="cl-06893531"><span class="cl-06884738">0.009764603</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-06893f4f"><p class="cl-06893530"><span class="cl-06884738">Bent</span></p></td><td class="cl-06893f50"><p class="cl-06893531"><span class="cl-06884738">0.004120622</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-06893f4f"><p class="cl-06893530"><span class="cl-06884738">Sedgwick</span></p></td><td class="cl-06893f50"><p class="cl-06893531"><span class="cl-06884738">0.003869304</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-06893f4f"><p class="cl-06893530"><span class="cl-06884738">Washington</span></p></td><td class="cl-06893f50"><p class="cl-06893531"><span class="cl-06884738">0.002875924</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-06893f58"><p class="cl-06893530"><span class="cl-06884738">Las Animas</span></p></td><td class="cl-06893f59"><p class="cl-06893531"><span class="cl-06884738">0.002651039</span></p></td></tr></tbody></table></div>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(combined_data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 64
+Columns: 12
+$ date            &lt;date&gt; 2022-02-01, 2022-02-01, 2022-02-01, 2022-02-01, 2022-…
+$ county          &lt;chr&gt; "Adams", "Alamosa", "Arapahoe", "Archuleta", "Baca", "…
+$ state           &lt;chr&gt; "Colorado", "Colorado", "Colorado", "Colorado", "Color…
+$ fips            &lt;chr&gt; "08001", "08003", "08005", "08007", "08009", "08011", …
+$ cases           &lt;dbl&gt; 126768, 4122, 144255, 2727, 706, 2199, 58046, 12365, 4…
+$ deaths          &lt;dbl&gt; 1224, 58, 1172, 9, 8, 46, 351, 104, 40, 9, 10, 49, 14,…
+$ new_cases       &lt;dbl&gt; 326, 33, 401, 6, 3, 22, 208, 19, 22, 3, 3, 5, 7, 56, 2…
+$ new_deaths      &lt;dbl&gt; 2, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9, 0, …
+$ pop             &lt;int&gt; 523544, 16579, 656855, 13806, 3490, 5339, 327084, 7541…
+$ cumPerCap       &lt;dbl&gt; 0.2421344, 0.2486278, 0.2196147, 0.1975228, 0.2022923,…
+$ newCasesPerCap  &lt;dbl&gt; 0.0006226793, 0.0019904699, 0.0006104848, 0.0004345937…
+$ newDeathsPerCap &lt;dbl&gt; 3.820118e-06, 0.000000e+00, 0.000000e+00, 0.000000e+00…</code></pre>
+</div>
+</div>
+</section>
+<section id="question-4" class="level1">
+<h1>Question 4</h1>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>question_4_cases <span class="ot">&lt;-</span> pop <span class="sc">%&gt;%</span></span>
+<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">inner_join</span>(colorado, <span class="at">by =</span> <span class="st">"fips"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">between</span>(date, my.date <span class="sc">-</span> <span class="dv">13</span>, my.date)) <span class="sc">%&gt;%</span></span>
+<span id="cb42-6"><a href="#cb42-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(county) <span class="sc">%&gt;%</span></span>
+<span id="cb42-7"><a href="#cb42-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">lag =</span> <span class="fu">sum</span>(new_cases <span class="sc">/</span> POPESTIMATE2021[<span class="dv">1</span>]<span class="sc">/</span><span class="dv">100000</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb42-8"><a href="#cb42-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>()</span>
+<span id="cb42-9"><a href="#cb42-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-10"><a href="#cb42-10" aria-hidden="true" tabindex="-1"></a>question_4_cases <span class="sc">%&gt;%</span></span>
+<span id="cb42-11"><a href="#cb42-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="at">County =</span> county, <span class="at">Cases =</span> lag) <span class="sc">%&gt;%</span></span>
+<span id="cb42-12"><a href="#cb42-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_max</span>(Cases, <span class="at">n =</span> <span class="dv">10</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb42-13"><a href="#cb42-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">flextable</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb42-14"><a href="#cb42-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_caption</span>(<span class="at">caption =</span> <span class="st">"Cases per 100,000 in the last 14 days"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="tabwid"><style>.cl-0692d7ac{}.cl-0690773c{font-family:'Helvetica';font-size:11pt;font-weight:normal;font-style:normal;text-decoration:none;color:rgba(0, 0, 0, 1.00);background-color:transparent;}.cl-06916bce{margin:0;text-align:left;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:5pt;padding-top:5pt;padding-left:5pt;padding-right:5pt;line-height: 1;background-color:transparent;}.cl-06916bcf{margin:0;text-align:right;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:5pt;padding-top:5pt;padding-left:5pt;padding-right:5pt;line-height: 1;background-color:transparent;}.cl-069175f6{width:0.75in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 1.5pt solid rgba(102, 102, 102, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-069175f7{width:0.75in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 1.5pt solid rgba(102, 102, 102, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-069175f8{width:0.75in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-06917600{width:0.75in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-06917601{width:0.75in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-06917602{width:0.75in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}</style><table data-quarto-disable-processing="true" class="cl-0692d7ac"><thead><tr style="overflow-wrap:break-word;"><th class="cl-069175f6"><p class="cl-06916bce"><span class="cl-0690773c">County</span></p></th><th class="cl-069175f7"><p class="cl-06916bcf"><span class="cl-0690773c">Cases</span></p></th></tr></thead><tbody><tr style="overflow-wrap:break-word;"><td class="cl-069175f8"><p class="cl-06916bce"><span class="cl-0690773c">Crowley</span></p></td><td class="cl-06917600"><p class="cl-06916bcf"><span class="cl-0690773c">0.0000003923278</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-069175f8"><p class="cl-06916bce"><span class="cl-0690773c">Lincoln</span></p></td><td class="cl-06917600"><p class="cl-06916bcf"><span class="cl-0690773c">0.0000003599488</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-069175f8"><p class="cl-06916bce"><span class="cl-0690773c">Alamosa</span></p></td><td class="cl-06917600"><p class="cl-06916bcf"><span class="cl-0690773c">0.0000003594909</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-069175f8"><p class="cl-06916bce"><span class="cl-0690773c">Mineral</span></p></td><td class="cl-06917600"><p class="cl-06916bcf"><span class="cl-0690773c">0.0000003336921</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-069175f8"><p class="cl-06916bce"><span class="cl-0690773c">Conejos</span></p></td><td class="cl-06917600"><p class="cl-06916bcf"><span class="cl-0690773c">0.0000003152203</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-069175f8"><p class="cl-06916bce"><span class="cl-0690773c">Fremont</span></p></td><td class="cl-06917600"><p class="cl-06916bcf"><span class="cl-0690773c">0.0000003097264</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-069175f8"><p class="cl-06916bce"><span class="cl-0690773c">Huerfano</span></p></td><td class="cl-06917600"><p class="cl-06916bcf"><span class="cl-0690773c">0.0000002682434</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-069175f8"><p class="cl-06916bce"><span class="cl-0690773c">Bent</span></p></td><td class="cl-06917600"><p class="cl-06916bcf"><span class="cl-0690773c">0.0000002659674</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-069175f8"><p class="cl-06916bce"><span class="cl-0690773c">Montezuma</span></p></td><td class="cl-06917600"><p class="cl-06916bcf"><span class="cl-0690773c">0.0000002649234</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-06917601"><p class="cl-06916bce"><span class="cl-0690773c">Mesa</span></p></td><td class="cl-06917602"><p class="cl-06916bcf"><span class="cl-0690773c">0.0000002573695</span></p></td></tr></tbody></table></div>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="co">#latest_date &lt;- max(covid_data$date)  </span></span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a><span class="co">#last_14_days &lt;- covid_data %&gt;%</span></span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a>  <span class="co">#filter(date &gt;= (latest_date - 14))  </span></span>
+<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-5"><a href="#cb43-5" aria-hidden="true" tabindex="-1"></a><span class="co">#last_14_days &lt;- last_14_days %&gt;%</span></span>
+<span id="cb43-6"><a href="#cb43-6" aria-hidden="true" tabindex="-1"></a> <span class="co"># left_join(population, by = c("fips" = "FIPS")) %&gt;%</span></span>
+<span id="cb43-7"><a href="#cb43-7" aria-hidden="true" tabindex="-1"></a><span class="co">#  mutate(</span></span>
+<span id="cb43-8"><a href="#cb43-8" aria-hidden="true" tabindex="-1"></a>  <span class="co">#  new_cases_14_days = cases - lag(cases),  </span></span>
+<span id="cb43-9"><a href="#cb43-9" aria-hidden="true" tabindex="-1"></a> <span class="co">#   new_cases_per_100k = (new_cases_14_days / POPESTIMATE2021) * 100000  </span></span>
+<span id="cb43-10"><a href="#cb43-10" aria-hidden="true" tabindex="-1"></a><span class="co">#  ) %&gt;%</span></span>
+<span id="cb43-11"><a href="#cb43-11" aria-hidden="true" tabindex="-1"></a><span class="co">#  group_by(county) %&gt;%</span></span>
+<span id="cb43-12"><a href="#cb43-12" aria-hidden="true" tabindex="-1"></a> <span class="co"># summarize(</span></span>
+<span id="cb43-13"><a href="#cb43-13" aria-hidden="true" tabindex="-1"></a>  <span class="co">#  total_new_cases_per_100k = sum(new_cases_per_100k, na.rm = TRUE)  </span></span>
+<span id="cb43-14"><a href="#cb43-14" aria-hidden="true" tabindex="-1"></a> <span class="co"># ) %&gt;%</span></span>
+<span id="cb43-15"><a href="#cb43-15" aria-hidden="true" tabindex="-1"></a> <span class="co"># ungroup()</span></span>
+<span id="cb43-16"><a href="#cb43-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-17"><a href="#cb43-17" aria-hidden="true" tabindex="-1"></a><span class="co">#top_5_counties &lt;- last_14_days %&gt;%</span></span>
+<span id="cb43-18"><a href="#cb43-18" aria-hidden="true" tabindex="-1"></a> <span class="co"># arrange(desc(total_new_cases_per_100k)) %&gt;%</span></span>
+<span id="cb43-19"><a href="#cb43-19" aria-hidden="true" tabindex="-1"></a> <span class="co"># slice_head(n = 5)</span></span>
+<span id="cb43-20"><a href="#cb43-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-21"><a href="#cb43-21" aria-hidden="true" tabindex="-1"></a><span class="co">#watch_list_counties &lt;- last_14_days %&gt;%</span></span>
+<span id="cb43-22"><a href="#cb43-22" aria-hidden="true" tabindex="-1"></a> <span class="co"># filter(total_new_cases_per_100k &gt; 100)  </span></span>
+<span id="cb43-23"><a href="#cb43-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-24"><a href="#cb43-24" aria-hidden="true" tabindex="-1"></a><span class="co">#print(top_5_counties)</span></span>
+<span id="cb43-25"><a href="#cb43-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-26"><a href="#cb43-26" aria-hidden="true" tabindex="-1"></a><span class="co">#watch_list_counties_count &lt;- nrow(watch_list_counties)</span></span>
+<span id="cb43-27"><a href="#cb43-27" aria-hidden="true" tabindex="-1"></a><span class="co">#cat("Number of counties meeting the watch list condition:", watch_list_counties_count, "\n")</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="question-5" class="level1">
+<h1>Question 5</h1>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a>tmp.date <span class="ot">=</span> <span class="fu">as.Date</span>(<span class="st">"2021-02-01"</span>)</span>
+<span id="cb44-5"><a href="#cb44-5" aria-hidden="true" tabindex="-1"></a>lubridate<span class="sc">::</span><span class="fu">year</span>(tmp.date)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 2021</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>lubridate<span class="sc">::</span><span class="fu">month</span>(tmp.date)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 2</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a>lubridate<span class="sc">::</span><span class="fu">yday</span>(tmp.date)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 32</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a>question_5_cases <span class="ot">&lt;-</span> colorado <span class="sc">%&gt;%</span></span>
+<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">year =</span> lubridate<span class="sc">::</span><span class="fu">year</span>(date)) <span class="sc">%&gt;%</span></span>
+<span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(year <span class="sc">==</span> <span class="dv">2021</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb50-4"><a href="#cb50-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(fips) <span class="sc">%&gt;%</span></span>
+<span id="cb50-5"><a href="#cb50-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">deaths =</span> <span class="fu">sum</span>(new_deaths), <span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb50-6"><a href="#cb50-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(pop, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"fips"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb50-7"><a href="#cb50-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">death_ratio =</span> <span class="dv">100</span> <span class="sc">*</span> (deaths <span class="sc">/</span> DEATHS2021)) <span class="sc">%&gt;%</span></span>
+<span id="cb50-8"><a href="#cb50-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(CTYNAME, deaths, DEATHS2021, death_ratio) <span class="sc">%&gt;%</span></span>
+<span id="cb50-9"><a href="#cb50-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(death_ratio <span class="sc">&gt;</span> <span class="dv">20</span>)</span>
+<span id="cb50-10"><a href="#cb50-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-11"><a href="#cb50-11" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(question_5_cases) <span class="sc">+</span></span>
+<span id="cb50-12"><a href="#cb50-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="fu">aes</span>(<span class="at">x =</span> death_ratio, <span class="at">y =</span> CTYNAME)) <span class="sc">+</span></span>
+<span id="cb50-13"><a href="#cb50-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="lab3_files/figure-html/unnamed-chunk-17-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="question-6" class="level1">
+<h1>Question 6</h1>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(zoo)</span>
+<span id="cb51-3"><a href="#cb51-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-4"><a href="#cb51-4" aria-hidden="true" tabindex="-1"></a>state <span class="ot">=</span> covid_data <span class="sc">%&gt;%</span></span>
+<span id="cb51-5"><a href="#cb51-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(date, state) <span class="sc">%&gt;%</span></span>
+<span id="cb51-6"><a href="#cb51-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">cases =</span> <span class="fu">sum</span>(cases)) <span class="sc">%&gt;%</span>  </span>
+<span id="cb51-7"><a href="#cb51-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(state <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">'New York'</span>, <span class="st">"Ohio"</span>, <span class="st">'Colorado'</span>, <span class="st">"Alabama"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb51-8"><a href="#cb51-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(state) <span class="sc">%&gt;%</span></span>
+<span id="cb51-9"><a href="#cb51-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">newCases =</span> cases <span class="sc">-</span> <span class="fu">lag</span>(cases)) <span class="sc">%&gt;%</span></span>
+<span id="cb51-10"><a href="#cb51-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">roll =</span> zoo<span class="sc">::</span><span class="fu">rollmean</span>(newCases, <span class="at">k =</span> <span class="dv">7</span>, <span class="at">align =</span> <span class="st">"right"</span>, <span class="at">fill =</span> <span class="cn">NA</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb51-11"><a href="#cb51-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>()  </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>`summarise()` has grouped output by 'date'. You can override using the
+`.groups` argument.</code></pre>
+</div>
+</div>
+</section>
+<section id="question-7" class="level1">
+<h1>Question 7</h1>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(maps)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attaching package: 'maps'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following object is masked from 'package:purrr':
+
+    map</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a>meta <span class="ot">=</span> <span class="fu">read_csv</span>(<span class="st">'https://raw.githubusercontent.com/mikejohnson51/csu-ess-330/refs/heads/main/resources/county-centroids.csv'</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">inner_join</span>(covid_data) <span class="sc">%&gt;%</span></span>
+<span id="cb56-3"><a href="#cb56-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(date) <span class="sc">%&gt;%</span></span>
+<span id="cb56-4"><a href="#cb56-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarise</span>(<span class="at">wmX_c =</span> <span class="fu">sum</span>(LON<span class="sc">*</span>cases) <span class="sc">/</span> <span class="fu">sum</span>(cases),</span>
+<span id="cb56-5"><a href="#cb56-5" aria-hidden="true" tabindex="-1"></a>              <span class="at">wmY_c =</span> <span class="fu">sum</span>(LAT<span class="sc">*</span>cases) <span class="sc">/</span> <span class="fu">sum</span>(cases),</span>
+<span id="cb56-6"><a href="#cb56-6" aria-hidden="true" tabindex="-1"></a>              <span class="at">cases =</span> <span class="fu">sum</span>(cases)) <span class="sc">%&gt;%</span></span>
+<span id="cb56-7"><a href="#cb56-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">arrange</span>(date) <span class="sc">|&gt;</span></span>
+<span id="cb56-8"><a href="#cb56-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">d =</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">n</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Rows: 3221 Columns: 3</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>── Column specification ────────────────────────────────────────────────────────
+Delimiter: ","
+chr (1): fips
+dbl (2): LON, LAT
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Joining with `by = join_by(fips)`</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb59"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb59-1"><a href="#cb59-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(meta) <span class="sc">+</span></span>
+<span id="cb59-2"><a href="#cb59-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">borders</span>(<span class="st">"state"</span>,<span class="at">fill =</span> <span class="st">"gray90"</span>, <span class="at">colour =</span> <span class="st">"white"</span>) <span class="sc">+</span></span>
+<span id="cb59-3"><a href="#cb59-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">x =</span> wmX_c, <span class="at">y =</span> wmY_c, <span class="at">size =</span> cases), <span class="at">color =</span> <span class="st">"red"</span>, <span class="at">alpha =</span>.<span class="dv">25</span>) <span class="sc">+</span></span>
+<span id="cb59-4"><a href="#cb59-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_linedraw</span>()<span class="sc">+</span></span>
+<span id="cb59-5"><a href="#cb59-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">color =</span> <span class="st">"Time"</span>,</span>
+<span id="cb59-6"><a href="#cb59-6" aria-hidden="true" tabindex="-1"></a>       <span class="at">size =</span> <span class="st">"Cases"</span>,</span>
+<span id="cb59-7"><a href="#cb59-7" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">""</span>, <span class="at">y =</span> <span class="st">''</span>,</span>
+<span id="cb59-8"><a href="#cb59-8" aria-hidden="true" tabindex="-1"></a>       <span class="at">title =</span> <span class="st">"Weighted Center of Covid-19 Cases"</span>) <span class="sc">+</span></span>
+<span id="cb59-9"><a href="#cb59-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="lab3_files/figure-html/unnamed-chunk-19-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
