@@ -1,0 +1,285 @@
+```         
+---
+title: "Lab 3: COVID-19"
+subtitle: 'Ecosystem Science and Sustainability 330'
+author: 
+  - name: Megan Voss
+    email: megan.voss@colostate.edu
+format: html
+---
+```
+
+```{r}
+library(tidyverse)
+library(flextable)
+library(zoo)
+library(dplyr)
+```
+
+# Question 1
+
+```{r}
+library(tidyverse)
+url = 'https://raw.githubusercontent.com/nytimes/covid-19-data/master/us-counties.csv'
+
+covid_data = read_csv(url)
+
+```
+
+# Question 2
+
+```{r}
+
+txt <- "2022-02-01"
+class(txt)
+
+date_example <- as.Date(txt)
+class(date_example)
+
+
+```
+
+```{r}
+my.date <- as.Date("2022-02-01")
+my.state <- "Colorado"
+
+```
+
+```{r}
+colorado <- covid_data |>
+  filter(state == my.state) |>
+  group_by(county) |>
+  arrange(date) |>
+  mutate(new_cases = cases - lag(cases),
+         new_deaths = deaths - lag(deaths)) |>
+  ungroup()
+
+```
+
+```{r}
+filter(colorado, date == my.date) |>
+  slice_max(cases, n=5) |>
+  select(Date = date, County = county, cases = cases) |>
+  flextable() |>
+  set_caption("Most Total Cases")
+
+filter(colorado, date == my.date) |>
+  slice_max(cases, n = 5) |>
+  select(Date = date, County = county, Cases = new_cases) |>
+  flextable() |>
+  set_caption(caption = "Most New Cases")
+
+```
+
+# Question 3
+
+```{r}
+library(tidyverse)
+
+pop_url <- 'https://www2.census.gov/programs-surveys/popest/datasets/2020-2023/counties/totals/co-est2023-alldata.csv'
+population <- read_csv(pop_url)
+
+```
+
+```{r}
+pop <- read.csv(pop_url) %>%
+  filter(COUNTY != 0) %>%
+  mutate(fips = paste0(sprintf("%02d", STATE), sprintf("%03d", COUNTY))) %>%
+  select(fips, contains('NAME'), contains('2021'))
+
+  
+```
+
+```{r}
+#mutate(
+   # STATE = as.character(sprintf("%02d", as.numeric(STATE))),  
+ #   COUNTY = as.character(sprintf("%03d", as.numeric(COUNTY))), 
+   # FIPS = paste0(STATE, COUNTY)  
+#  ) %>%
+ # filter(COUNTY != "000") %>%  
+#  select(FIPS, contains("NAME"), contains("2021"))  
+
+
+```
+
+
+```{r}
+names(population)
+
+dim(population)
+
+nrow(population)
+
+str(population)
+
+glimpse(population)
+
+library(skimr)
+skim(population)
+
+```
+
+```{r}
+range(population$POPESTIMATE2021, na.rm = TRUE)
+
+```
+
+
+```{r}
+combined_data = inner_join(colorado, select(pop, fips, pop = POPESTIMATE2021), by = 'fips') %>%
+  filter(date == my.date) %>%
+  mutate(cumPerCap = cases / pop, newCasesPerCap = new_cases / pop, newDeathsPerCap = new_deaths / pop )
+
+```
+
+
+```{r}
+library(flextable)
+
+combined_data %>%
+   select(County = county, Cases = cumPerCap) %>%
+   slice_max(Cases, n = 5) %>%
+  flextable() %>%
+  set_caption("Top 5 Counties with Most Cumulative Cases Per Capita on 2021-01-01")
+
+combined_data %>%
+  select(County = county, Cases = newCasesPerCap) %>%
+  slice_max(Cases, n = 5) %>%
+  flextable() %>%
+  set_caption(caption = "Top 5 Counties with Most New Cases Per Capita on 2021-01-01")
+
+```
+
+
+
+```{r}
+glimpse(combined_data)
+```
+
+# Question 4
+
+```{r}
+library(dplyr)
+
+question_4_cases <- pop %>%
+  inner_join(colorado, by = "fips") %>%
+  filter(between(date, my.date - 13, my.date)) %>%
+  group_by(county) %>%
+  summarize(lag = sum(new_cases / POPESTIMATE2021[1]/100000)) %>%
+  ungroup()
+
+question_4_cases %>%
+  select(County = county, Cases = lag) %>%
+  slice_max(Cases, n = 10) %>%
+  flextable() %>%
+  set_caption(caption = "Cases per 100,000 in the last 14 days")
+```
+
+```{r}
+#latest_date <- max(covid_data$date)  
+#last_14_days <- covid_data %>%
+  #filter(date >= (latest_date - 14))  
+
+#last_14_days <- last_14_days %>%
+ # left_join(population, by = c("fips" = "FIPS")) %>%
+#  mutate(
+  #  new_cases_14_days = cases - lag(cases),  
+ #   new_cases_per_100k = (new_cases_14_days / POPESTIMATE2021) * 100000  
+#  ) %>%
+#  group_by(county) %>%
+ # summarize(
+  #  total_new_cases_per_100k = sum(new_cases_per_100k, na.rm = TRUE)  
+ # ) %>%
+ # ungroup()
+
+#top_5_counties <- last_14_days %>%
+ # arrange(desc(total_new_cases_per_100k)) %>%
+ # slice_head(n = 5)
+
+#watch_list_counties <- last_14_days %>%
+ # filter(total_new_cases_per_100k > 100)  
+
+#print(top_5_counties)
+
+#watch_list_counties_count <- nrow(watch_list_counties)
+#cat("Number of counties meeting the watch list condition:", watch_list_counties_count, "\n")
+
+```
+
+# Question 5
+
+```{r}
+library(ggplot2)
+library(dplyr)
+
+tmp.date = as.Date("2021-02-01")
+lubridate::year(tmp.date)
+
+lubridate::month(tmp.date)
+lubridate::yday(tmp.date)
+
+question_5_cases <- colorado %>%
+  mutate(year = lubridate::year(date)) %>%
+  filter(year == 2021) %>%
+  group_by(fips) %>%
+  summarize(deaths = sum(new_deaths), na.rm = TRUE) %>%
+  left_join(pop, by = c("fips")) %>%
+  mutate(death_ratio = 100 * (deaths / DEATHS2021)) %>%
+  select(CTYNAME, deaths, DEATHS2021, death_ratio) %>%
+  filter(death_ratio > 20)
+
+ggplot(question_5_cases) +
+  geom_col(aes(x = death_ratio, y = CTYNAME)) +
+  theme_classic()
+
+```
+
+# Question 6
+
+```{r}
+library(dplyr)
+library(zoo)
+
+state = covid_data %>%
+  group_by(date, state) %>%
+  summarise(cases = sum(cases)) %>%  
+  filter(state %in% c('New York', "Ohio", 'Colorado', "Alabama")) %>%
+  group_by(state) %>%
+  mutate(newCases = cases - lag(cases)) %>%
+  mutate(roll = zoo::rollmean(newCases, k = 7, align = "right", fill = NA)) %>%
+  ungroup()  
+
+```
+
+
+
+
+
+# Question 7
+
+```{r}
+library(maps)
+
+meta = read_csv('https://raw.githubusercontent.com/mikejohnson51/csu-ess-330/refs/heads/main/resources/county-centroids.csv') %>% 
+  inner_join(covid_data) %>%
+    group_by(date) %>%
+    summarise(wmX_c = sum(LON*cases) / sum(cases),
+              wmY_c = sum(LAT*cases) / sum(cases),
+              cases = sum(cases)) %>%
+    arrange(date) |>
+    mutate(d = 1:n())
+  
+ggplot(meta) +
+  borders("state",fill = "gray90", colour = "white") +
+  geom_point(aes(x = wmX_c, y = wmY_c, size = cases), color = "red", alpha =.25) +
+  theme_linedraw()+
+  labs(color = "Time",
+       size = "Cases",
+       x = "", y = '',
+       title = "Weighted Center of Covid-19 Cases") +
+  theme(legend.position = )
+  
+
+```
+
+
